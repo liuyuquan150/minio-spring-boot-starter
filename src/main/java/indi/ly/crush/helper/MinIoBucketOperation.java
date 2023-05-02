@@ -97,6 +97,7 @@ class MinIoBucketOperation
 			properties.setPolicyLocation(policyLocation);
 		}
 		this.policyLocation = policyLocation;
+		this.makeBucket = properties.getMakeBucket();
 		
 		if (this.logger.isDebugEnabled()) {
 			this.logger.debug(properties);
@@ -178,17 +179,19 @@ class MinIoBucketOperation
 	
 	@PostConstruct
 	private void doMakeBucket() {
-		this.makeBucket();
-		List<Bucket> buckets = this.listBuckets();
-		Supplier<String> messageSupplier = () -> buckets
-													.stream()
-													.map(bucket -> bucket.creationDate().plusHours(8) + "-" + bucket.name())
-													.collect(Collectors.joining(", ", "[", "]"));
-		LogFormatUtils.traceDebug(this.logger,
-				traceOn -> "MinIo All Bucket(Format: Creation time - Name): %s".formatted(
-						LogFormatUtils.formatValue(buckets.isEmpty() ? "[]" : messageSupplier.get(), !traceOn)));
+		if (this.makeBucket) {
+			this.makeBucket();
+			List<Bucket> buckets = this.listBuckets();
+			Supplier<String> messageSupplier
+					= () -> buckets
+								.stream()
+								.map(bucket -> bucket.creationDate().plusHours(8) + "-" + bucket.name())
+								.collect(Collectors.joining(", ", "[", "]"));
+			LogFormatUtils.traceDebug(this.logger,
+					traceOn -> "MinIo All Bucket(Format: Creation time - Name): %s".formatted(
+							LogFormatUtils.formatValue(buckets.isEmpty() ? "[]" : messageSupplier.get(), !traceOn)));
+		}
 	}
-	
 	@Override
 	public void setResourceLoader(@NonNull ResourceLoader resourceLoader) {
 		this.resourcePatternResolver = ResourcePatternUtils.getResourcePatternResolver(resourceLoader);

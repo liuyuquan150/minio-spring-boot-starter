@@ -20,7 +20,7 @@ import java.time.Duration;
 public class MinIoProperties {
 	/**
 	 * <p>
-	 *     MinIO 服务器的访问地址, 默认设置为内网下的访问地址(<em>即 http://localhost:9000</em>).
+	 *     MinIO 服务器的访问地址, 默认设置为内网下的<a href="http://localhost:9000">访问地址</a>.
 	 * </p>
 	 */
 	private String endpoint = "http://localhost:9000";
@@ -88,6 +88,15 @@ public class MinIoProperties {
 	 * @see HttpUtils#newDefaultHttpClient(long, long, long)
 	 */
 	private String okHttpClientBeanName;
+	/**
+	 * <p>
+	 *     是否执行 {@link MinIoBucketOperation#doMakeBucket()} 方法中的内容. <br />
+	 *
+	 *     如果 MinIO 服务器未启动, 便执行 {@link MinIoBucketOperation#doMakeBucket()} 会异常抛出从而导致程序终止.
+	 * </p>
+	 */
+	@SuppressWarnings(value = "JavadocReference")
+	private Boolean makeBucket = false;
 	
 	public String getEndpoint() {
 		return endpoint;
@@ -177,12 +186,20 @@ public class MinIoProperties {
 		this.okHttpClientBeanName = okHttpClientBeanName;
 	}
 	
+	public Boolean getMakeBucket() {
+		return makeBucket;
+	}
+	
+	public void setMakeBucket(Boolean makeBucket) {
+		this.makeBucket = makeBucket;
+	}
+	
 	@Override
 	public String toString() {
 		return "MinIoProperties{" + "endpoint='" + endpoint + '\'' + ", region='" + region + '\'' + ", accessKey='"
 				+ accessKey + '\'' + ", secretKey='" + secretKey + '\'' + ", connectTimeout=" + connectTimeout
 				+ ", writeTimeout=" + writeTimeout + ", readTimeout=" + readTimeout + ", bucketName='" + bucketName
 				+ '\'' + ", bucketPolicy=" + bucketPolicy + ", policyLocation='" + policyLocation + '\''
-				+ ", okHttpClientBeanName='" + okHttpClientBeanName + '\'' + '}';
+				+ ", okHttpClientBeanName='" + okHttpClientBeanName + '\'' + ", makeBucket=" + makeBucket + '}';
 	}
 }
